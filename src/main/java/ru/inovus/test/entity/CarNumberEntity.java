@@ -1,10 +1,33 @@
-package ru.inovus.test.model;
+package ru.inovus.test.entity;
 
+import javax.persistence.*;
 import java.util.Objects;
 
-public class CarNumber {
+@Entity
+@Table(name = "car_number")
 
-    private static final String PAST = "116 RUS";
+public class CarNumberEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getPAST() {
+        return PAST;
+    }
+
+    public void setPAST(String PAST) {
+        this.PAST = PAST;
+    }
+
+    private String PAST = "116 RUS";
 
     private String firstLetter;
     private String secondLetter;
@@ -49,7 +72,7 @@ public class CarNumber {
         return firstLetter + addZero(number) + secondLetter + thirdLetter + " " + PAST;
     }
 
-    public CarNumber(String firstLetter, String secondLetter, String thirdLetter, int number) {
+    public CarNumberEntity(String firstLetter, String secondLetter, String thirdLetter, int number) {
         this.firstLetter = firstLetter;
         this.secondLetter = secondLetter;
         this.thirdLetter = thirdLetter;
@@ -70,7 +93,7 @@ public class CarNumber {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CarNumber carNumber = (CarNumber) o;
+        CarNumberEntity carNumber = (CarNumberEntity) o;
         return number == carNumber.number &&
                 firstLetter.equals(carNumber.firstLetter) &&
                 secondLetter.equals(carNumber.secondLetter) &&

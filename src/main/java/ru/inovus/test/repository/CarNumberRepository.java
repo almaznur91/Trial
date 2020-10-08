@@ -1,21 +1,11 @@
 package ru.inovus.test.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.inovus.test.model.CarNumber;
-
-import java.util.ArrayList;
-import java.util.List;
+import ru.inovus.test.entity.CarNumberEntity;
 
 @Repository
-public class CarNumberRepository {
-    private final List<CarNumber> randomNumberList = new ArrayList<>();
+public interface CarNumberRepository extends JpaRepository<CarNumberEntity, Integer> {
 
-    public void add(CarNumber carNumber) {
-        this.randomNumberList.add(carNumber);
-    }
-
-    public boolean contains(CarNumber carNumber) {
-        return this.randomNumberList.indexOf(carNumber) >= 0;
-    }
 
 }
