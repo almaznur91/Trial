@@ -2,10 +2,13 @@ package ru.inovus.test.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.inovus.test.dto.CarNumberDto;
 import ru.inovus.test.entity.CarNumberEntity;
+import ru.inovus.test.mapper.CarNumberMapper;
 import ru.inovus.test.repository.CarNumberRepository;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -14,8 +17,6 @@ public class CarNumberService {
 
     private static final String[] LETTERS = {"А", "В", "Е", "К", "М", "Н", "О", "Р", "С", "Т", "У", "Х"};
 
-    private CarNumberEntity carNumber = new CarNumberEntity("А", "А", "А", 0);
-
     private final CarNumberRepository repository;
 
     @Autowired
@@ -23,37 +24,35 @@ public class CarNumberService {
         this.repository = repository;
     }
 
-    public void setCarNumber(CarNumberEntity carNumber) {
-        this.carNumber = carNumber;
-    }
-
-    public String randomNumber() {
+    public CarNumberDto randomNumber() {
 
         Random rn = new Random();
+
+        CarNumberDto carNumber = new CarNumberDto();
         carNumber.setNumber(1 + (int) (Math.random() * 999));
 
         carNumber.setFirstLetter(LETTERS[rn.nextInt(LETTERS.length)]);
         carNumber.setSecondLetter(LETTERS[rn.nextInt(LETTERS.length)]);
         carNumber.setThirdLetter(LETTERS[rn.nextInt(LETTERS.length)]);
 
-        CarNumberEntity randomCarNumber = new CarNumberEntity(carNumber.getFirstLetter(), carNumber.getSecondLetter(), carNumber.getThirdLetter(), carNumber.getNumber());
+        return carNumber;
+    }
 
-        if (repository.equals(randomCarNumber)) {
-            randomNumber();
-        } else repository.save(randomCarNumber);
-
-        if (!repository.equals(carNumber)) {
-            repository.save(randomCarNumber);
-        } else {
-            randomNumber();
+    public String nextRandom() {
+        CarNumberDto carNumberDto = randomNumber();
+        while (isPresent(carNumberDto)) {
+            carNumberDto = randomNumber();
         }
+        saveCarNumber(carNumberDto);
+        return carNumberDto.toString();
 
-        return this.carNumber.toString();
     }
 
     public String nextNumber() {
 
         String lastLetter = LETTERS[LETTERS.length - 1];
+        CarNumberDto carNumber = new CarNumberDto(carNumber.getFirstLetter(), carNumber.getSecondLetter(), carNumber.getThirdLetter(), carNumber.getNumber());
+
 
         if (carNumber.getNumber() < 999) {
             carNumber.setNumber(carNumber.getNumber() + 1);
@@ -82,19 +81,19 @@ public class CarNumberService {
         return LETTERS[Arrays.asList(LETTERS).indexOf(letter) + 1];
     }
 
-    public CarNumberEntity getCarNumberByIdOrEmpty(Integer carNumberId) {
-        Optional<CarNumberEntity> optionalCarNumberEntity = Optional.of(repository.findById(carNumberId).orElse(new CarNumberEntity("A","A", "A", 0)));
-        return optionalCarNumberEntity.orElseThrow(RuntimeException::new);
+    public void saveCarNumber(CarNumberDto carNumberDto) {
+
+        CarNumberEntity carNumber = CarNumberMapper.dtoToEntity(carNumberDto);
+        repository.save(carNumber);
+
     }
 
-    public void saveCarNumber(CarNumberEntity carNumberEntity) {
-        CarNumberEntity entity = getCarNumberByIdOrEmpty(carNumberEntity.getId());
-        entity.setNumber(carNumberEntity.getNumber());
-        entity.setFirstLetter(carNumberEntity.getFirstLetter());
-        entity.setSecondLetter(carNumberEntity.getSecondLetter());
-        entity.setThirdLetter(carNumberEntity.getThirdLetter());
-        entity.setPAST("116 RUS");
-        repository.save(entity);
+    public boolean isPresent(CarNumberDto carNumberDto) {
+        List<CarNumberEntity> carNumbers = repository.findAllCarNumber(carNumberDto.getFirstLetter(), carNumberDto.getSecondLetter(), carNumberDto.getThirdLetter(), carNumberDto.getNumber());
+        if (carNumbers.isEmpty()) {
+            return false;
+        } else
+            return true;
     }
 
 }

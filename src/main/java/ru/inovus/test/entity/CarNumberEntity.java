@@ -29,10 +29,16 @@ public class CarNumberEntity {
 
     private String PAST = "116 RUS";
 
+    @Column(name = "first_letter")
     private String firstLetter;
+
+    @Column(name = "second_letter")
     private String secondLetter;
+
+    @Column(name = "third_letter")
     private String thirdLetter;
 
+    @Column(name = "number")
     private int number;
 
     public String getFirstLetter() {
@@ -78,6 +84,9 @@ public class CarNumberEntity {
         this.thirdLetter = thirdLetter;
         this.number = number;
 
+    }
+
+    public CarNumberEntity() {
     }
 
     private String addZero(int num) {

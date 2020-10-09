@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.inovus.test.dto.CarNumberDto;
 import ru.inovus.test.entity.CarNumberEntity;
 import ru.inovus.test.repository.CarNumberRepository;
 import ru.inovus.test.service.CarNumberService;
@@ -32,14 +33,14 @@ public class CarNumberController {
 
     @GetMapping(value = "/random")
     public String random(Model model) {
-        model.addAttribute("random", service.randomNumber());
+        model.addAttribute("random", service.nextRandom());
         return "random";
     }
 
     @GetMapping(value = "/next")
-    public String next(Model model, @ModelAttribute CarNumberEntity carNumberEntity) {
+    public String next(Model model, @ModelAttribute CarNumberDto carNumberDto) {
         model.addAttribute("next", service.nextNumber());
-        carNumberService.saveCarNumber(carNumberEntity);
+        carNumberService.saveCarNumber(carNumberDto);
         return "next";
     }
 
